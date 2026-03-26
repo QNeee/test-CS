@@ -85,7 +85,7 @@ namespace Test_Cs
             {
                 var notFound = ex as NotFoundException;
                 statusCode = notFound?.StatusCode ?? 500;
-                response = notFound != null ? notFound.Message : "Internal server error";
+                response = notFound != null ? notFound.Message : ex.Message;
             }
 
             await WriteJsonResponse(httpContext, statusCode, response);

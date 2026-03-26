@@ -2,6 +2,7 @@
 
 using System.Reflection;
 using System.Text.Json;
+using Test_Cs.Data;
 using Test_Cs.Errors;
 namespace Test_Cs
 {
@@ -74,6 +75,18 @@ namespace Test_Cs
         public static string MakeClassName(string value)
         {
             return char.ToUpper(value[0]) + value.Substring(1);
+        }
+        private static Dictionary<string, List<Post>> GetDatabseData()
+        {
+            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data.json");
+            string json = File.ReadAllText(filePath);
+            var data = JsonSerializer.Deserialize<Dictionary<string, List<Post>>>(json);
+            if (data?.Count > 0) return data;
+            return new Dictionary<string, List<Post>>();
+        }
+        public static List<Post> GetListByKey(string key)
+        {
+            return GetDatabseData().TryGetValue(key, out var dictKeywords) ? dictKeywords : new List<Post>();
         }
         public Response Execute()
         {

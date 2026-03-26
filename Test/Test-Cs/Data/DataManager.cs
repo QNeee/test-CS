@@ -27,27 +27,28 @@ namespace Test_Cs.Data
     {
         readonly string filtersPaths = "Test_Cs.Data.Filter.";
         readonly IFilter _filter;
-        public DataManager(string flag)
+        readonly List<Post> _data = new List<Post>();
+        public DataManager(string flag, List<Post> data)
         {
             string className = Context.MakeClassName(flag);
             Assembly asm = Assembly.GetExecutingAssembly();
             string classNamePath = $"{filtersPaths}{className}";
             Type type = asm.GetType(classNamePath) ?? typeof(Title);
             _filter = (IFilter)Activator.CreateInstance(type)!;
+            _data = data;
         }
-        public List<ResponseObj> FilterItems(List<string> values, string key, int limit)
+        public List<ResponseObj> FilterItems(List<string> values, int limit)
         {
-            var needItems = GetListByKey(key);
             var list = new List<ResponseObj>();
-            if (needItems != null)
+            if (_data != null)
             {
                 int count = 0;
                 foreach (var value in values)
                 {
-                    for (int i = 0; i < needItems.Count; i++)
+                    for (int i = 0; i < _data.Count; i++)
                     {
                         if (count >= limit) break;
-                        var item = needItems[i];
+                        var item = _data[i];
                         if (_filter.Execute(item, value, list)) count++;
                     }
                 }
@@ -55,18 +56,5 @@ namespace Test_Cs.Data
             return list;
         }
 
-        private static List<Post>? GetListByKey(string key)
-        {
-            var dictionary = GetData();
-            return dictionary.TryGetValue(key, out var dictKeywords) ? dictKeywords : null;
-        }
-        private static Dictionary<string, List<Post>> GetData()
-        {
-            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data.json");
-            string json = File.ReadAllText(filePath);
-            var data = JsonSerializer.Deserialize<Dictionary<string, List<Post>>>(json);
-            if (data?.Count > 0) return data;
-            return new Dictionary<string, List<Post>>();
-        }
     }
 }
