@@ -9,8 +9,6 @@ BASH:
 
 *** Приклад запиту ***
 URL: POST http://localhost:5000/search
-Заголовки:
-====================
 Content-Type: application/json
 ====================
 
