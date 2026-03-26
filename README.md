@@ -11,13 +11,16 @@ BASH:
 # URL: POST http://localhost:5000/search
 # Content-Type: application/json
 # Тіло запиту (JSON)
-# {
+```json
+{
   "items": [
     { "subreddit": "r/nature", "keywords": ["forest", "river"] },
     { "subreddit": "r/aww", "keywords": ["cat","dog"] }
   ],
-  "limit": 2
+  "limit": 2,
+  "filterBy":"title",
 }
+```
 ====================
 *** Опис використання ***
 ====================
