@@ -1,4 +1,4 @@
-*** Інструкція по запуску ***
+# Інструкція по запуску
 BASH:
 ====================
 1. git clone <url_репозиторію>
@@ -7,14 +7,11 @@ BASH:
 4. docker run --name test_cs_container -p 5000:5000 -e SERVER_URL=http://*:5000/ test_cs_app
 ====================
 
-*** Приклад запиту ***
-====================
+# Приклад запиту
 # URL: POST http://localhost:5000/search
 # Content-Type: application/json
-====================
-*** Тіло запиту (JSON) ***
-====================
-{
+# Тіло запиту (JSON)
+# {
   "items": [
     { "subreddit": "r/nature", "keywords": ["forest", "river"] },
     { "subreddit": "r/aww", "keywords": ["cat","dog"] }
