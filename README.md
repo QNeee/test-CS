@@ -9,25 +9,18 @@
 
 # Приклад запиту :
 
-# URL: 
-POST http://localhost:5000/search
+# URL: POST http://localhost:5000/search
 
-# Заголовки:
-Content-Type: application/json
+# Заголовки:POST http://localhost:5000/search
 
-# Тіло запиту (JSON):
+**Тіло запиту (JSON):**
+```json
 {
-"items": [
-{
-"subreddit": "r/nature",
-"keywords": ["forest", "river"]
-},
-{
-"subreddit": "r/aww",
-"keywords": [ "cat","dog"]
-}
-],
-"limit": 2
+  "items": [
+    { "subreddit": "r/nature", "keywords": ["forest", "river"] },
+    { "subreddit": "r/aww", "keywords": ["cat","dog"] }
+  ],
+  "limit": 2
 }
 # Опис використання :
 
