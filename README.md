@@ -18,6 +18,7 @@ BASH:
     { "subreddit": "r/aww", "keywords": ["cat","dog"] }
   ],
   "limit": 2,
+  "file":false,
   "filterBy":"title",
 }
 ```
