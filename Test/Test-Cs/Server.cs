@@ -86,6 +86,11 @@ namespace Test_Cs
                 var notFound = ex as NotFoundException;
                 statusCode = notFound?.StatusCode ?? 500;
                 response = notFound != null ? notFound.Message : ex.Message;
+                if (statusCode == 500)
+                {
+                    var logger = Logger.GetInstance();
+                    logger.Log($"Error: {ex.Message}");
+                }
             }
 
             await WriteJsonResponse(httpContext, statusCode, response);

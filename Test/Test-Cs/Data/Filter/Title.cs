@@ -6,7 +6,7 @@ namespace Test_Cs.Data.Filter
     {
         public bool Execute(Post item, string value, List<ResponseObj> list)
         {
-            bool isMatch = item.title.Contains(value, StringComparison.OrdinalIgnoreCase) && !list.Any(x => x.Text == item.title);
+            bool isMatch = item.title.Contains(value, StringComparison.OrdinalIgnoreCase);
             if (isMatch)
             {
                 var obj = new ResponseObj(item.title, String.IsNullOrEmpty(item.url));

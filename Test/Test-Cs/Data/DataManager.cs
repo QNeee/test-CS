@@ -1,6 +1,4 @@
 ﻿
-using System.Reflection;
-using System.Text.Json;
 using Test_Cs.Data.Filter;
 
 namespace Test_Cs.Data
@@ -30,10 +28,9 @@ namespace Test_Cs.Data
         readonly List<Post> _data = new List<Post>();
         public DataManager(string flag, List<Post> data)
         {
-            string className = Context.MakeClassName(flag);
-            Assembly asm = Assembly.GetExecutingAssembly();
+            string className = Helper.MakeClassName(flag);
             string classNamePath = $"{filtersPaths}{className}";
-            Type type = asm.GetType(classNamePath) ?? typeof(Title);
+            Type type = Helper.MakeType(classNamePath) ?? typeof(Title);
             _filter = (IFilter)Activator.CreateInstance(type)!;
             _data = data;
         }

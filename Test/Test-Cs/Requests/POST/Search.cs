@@ -11,12 +11,16 @@ namespace Test_Cs.Requests.POST
             var result = new Response();
             if (data != null)
             {
-                foreach (var item in data.items)
+                Parallel.ForEach(data.items, item =>
                 {
                     var dataBase = Context.GetListByKey(item.subreddit);
-                    var dataManager = new DataManager(data?.filterBy ?? defaultFilterValue, dataBase);
-                    result.Data["/" + item.subreddit] = dataManager.FilterItems(item.keywords, data?.limit ?? InitialLimit);
-                }
+                    var dataManager = new DataManager(data.filterBy ?? defaultFilterValue, dataBase);
+
+                    result.Data["/" + item.subreddit] = dataManager.FilterItems(
+                        item.keywords,
+                        data.limit == 0? InitialLimit: data.limit
+                    );
+                });
             }
             return result;
         }

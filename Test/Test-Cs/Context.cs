@@ -1,9 +1,9 @@
 ﻿
 
-using System.Reflection;
 using System.Text.Json;
 using Test_Cs.Data;
 using Test_Cs.Errors;
+using System.Collections.Concurrent;
 namespace Test_Cs
 {
     public class QueryParam
@@ -32,7 +32,7 @@ namespace Test_Cs
     }
     public class Response
     {
-        public Dictionary<string, List<ResponseObj>> Data { get; set; } = new();
+        public ConcurrentDictionary<string, List<ResponseObj>> Data { get; set; } = new();
     }
     public class RequestData
     {
@@ -63,18 +63,13 @@ namespace Test_Cs
 
             string reqUrl = req.Url.Trim('/').ToLower();
             if (!_routes.Contains(reqUrl)) throw new NotFoundException($"Маршрут '{reqUrl}' не знайдено!");
-            string className = MakeClassName(reqUrl);
+            string className = Helper.MakeClassName(reqUrl);
             string classNamePath = $"{routesMethodsPath}{req.Method}.{className}";
-            Assembly asm = Assembly.GetExecutingAssembly();
-            Type type = asm.GetType(classNamePath) ?? throw new NotFoundException($"Обробник для методу '{req.Method}' по маршруту {reqUrl} не знайдено!");
+            Type type = Helper.MakeType(classNamePath) ?? throw new NotFoundException($"Обробник для методу '{req.Method}' по маршруту {reqUrl} не знайдено!");
             _instance = (IRequest)Activator.CreateInstance(type)!;
             Data = req.Data;
             ReqMethod = req.Method;
             ReqUrl = req.Url;
-        }
-        public static string MakeClassName(string value)
-        {
-            return char.ToUpper(value[0]) + value.Substring(1);
         }
         private static Dictionary<string, List<Post>> GetDatabseData()
         {
