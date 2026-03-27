@@ -6,22 +6,22 @@ namespace Test_Cs.Requests.POST
     {
         private readonly string defaultFilterValue = "title";
         private readonly int InitialLimit = 15;
-        public Response Execute(RequestData? data)
+        public async Task<Response> Execute(RequestData? data)
         {
             var result = new Response();
+
             if (data != null)
             {
-                Parallel.ForEach(data.items, item =>
+                var tasks = data.items.Select(async item =>
                 {
-                    var dataBase = Context.GetListByKey(item.subreddit);
-                    var dataManager = new DataManager(data.filterBy ?? defaultFilterValue, dataBase);
-
-                    result.Data["/" + item.subreddit] = dataManager.FilterItems(
-                        item.keywords,
-                        data.limit == 0? InitialLimit: data.limit
-                    );
+                    var posts = await RedditParser.GetPosts(item.subreddit, data.limit == 0 ? InitialLimit : data.limit);
+                    var dataManager = new DataManager(data.filterBy ?? defaultFilterValue, posts);
+                    var filtered = dataManager.FilterItems(item.keywords);
+                    result.Data["/" + item.subreddit] = filtered;
                 });
+                await Task.WhenAll(tasks);
             }
+
             return result;
         }
     }

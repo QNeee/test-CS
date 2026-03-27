@@ -63,7 +63,7 @@ namespace Test_Cs
         private static async Task HandleRequest(HttpListenerContext httpContext)
         {
             int statusCode = 200;
-            object response;
+            object response= new object();
             bool isFile = false;
             try
             {
@@ -83,7 +83,7 @@ namespace Test_Cs
                 );
 
                 Context context = new Context(reqSett);
-                response = context.Execute().Data;
+                response = context.Execute().Result.Data;
                 isFile = reqSett.File;
             }
             catch (Exception ex)

@@ -50,7 +50,7 @@ namespace Test_Cs
     }
     public interface IRequest
     {
-        Response Execute(RequestData? data);
+        Task<Response> Execute(RequestData? data);
     }
     internal class Context
     {
@@ -73,19 +73,7 @@ namespace Test_Cs
             ReqMethod = req.Method;
             ReqUrl = req.Url;
         }
-        private static Dictionary<string, List<Post>> GetDatabseData()
-        {
-            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data.json");
-            string json = File.ReadAllText(filePath);
-            var data = JsonSerializer.Deserialize<Dictionary<string, List<Post>>>(json);
-            if (data?.Count > 0) return data;
-            return new Dictionary<string, List<Post>>();
-        }
-        public static List<Post> GetListByKey(string key)
-        {
-            return GetDatabseData().TryGetValue(key, out var dictKeywords) ? dictKeywords : new List<Post>();
-        }
-        public Response Execute()
+        public async Task<Response> Execute()
         {
             var loger = Logger.GetInstance();
             loger.Log("=========================================");
@@ -98,7 +86,8 @@ namespace Test_Cs
             }
 
             loger.Log("response");
-            var result = _instance?.Execute(Data)!;
+            var result = await _instance?.Execute(Data)!;
+            Console.WriteLine(result.Data.Count);
             loger.Log(JsonSerializer.Serialize(result.Data, new JsonSerializerOptions { WriteIndented = true }));
             loger.Log("=========================================");
             return result;
