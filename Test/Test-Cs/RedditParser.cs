@@ -1,5 +1,7 @@
 ﻿
+using System.Security.Claims;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Test_Cs.Data;
 
 namespace Test_Cs
@@ -26,20 +28,20 @@ namespace Test_Cs
 
                 string content = await response.Content.ReadAsStringAsync();
                 using JsonDocument doc = JsonDocument.Parse(content);
-
-                foreach (var child in doc.RootElement.GetProperty("data").GetProperty("children").EnumerateArray())
+                var childrens = doc.RootElement.GetProperty("data").GetProperty("children").EnumerateArray();
+                foreach (var child in childrens)
                 {
                     var data = child.GetProperty("data");
-                    string title = data.GetProperty("title").GetString() ?? "";
-                    string text = data.GetProperty("selftext").GetString() ?? "";
-                    string itemUrl = data.GetProperty("url").GetString() ?? "";
-
-                    posts.Add(new Post
+                    var title = data.GetProperty("title").GetString() ?? "";
+                    var urlImage = data.GetProperty("url").GetString() ?? "";
+                    var text = data.GetProperty("selftext").GetString() ?? "";
+                    Post post = new Post
                     {
                         title = title,
                         text = text,
-                        url = itemUrl,
-                    });
+                        url = urlImage
+                    };
+                    posts.Add(post);
                 }
             }
             catch (HttpRequestException ex)
@@ -54,7 +56,6 @@ namespace Test_Cs
             {
                 Console.WriteLine("Інша помилка: " + ex.Message);
             }
-
             return posts;
         }
     }

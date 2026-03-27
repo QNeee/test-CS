@@ -14,12 +14,12 @@ BASH:
 ```json
 {
   "items": [
-    { "subreddit": "r/nature", "keywords": ["forest", "river"] },
-    { "subreddit": "r/aww", "keywords": ["cat","dog"] }
+    { "subreddit": "r/nature", "keywords": ["Whale", "geckos","Pit"] },
+    { "subreddit": "r/aww", "keywords": ["cat","this"] }
   ],
-  "limit": 2,
+  "limit": 15,
   "file":false,
-  "filterBy":"title",
+  "filterBy":"title"
 }
 ```
 # Опис використання
@@ -29,6 +29,7 @@ BASH:
 Поле filterBy визначає, де саме виконувати пошук ключових слів:
 title — пошук у заголовку поста
 text — пошук у тексті поста
+file - чи повернути файлом
 Поле limit обмежує кількість постів, які завантажуються з Reddit для кожного сабреддіту.
 Якщо limit не передано або він дорівнює 0, використовується значення за замовчуванням.
 Запит і відповідь передаються у форматі JSON або файлом JSON.
