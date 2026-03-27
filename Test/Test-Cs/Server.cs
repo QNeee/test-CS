@@ -42,16 +42,20 @@ namespace Test_Cs
             return new RequestSettings(httpMethod, route, requestData, param);
         }
 
-        private static async Task WriteJsonResponse(HttpListenerContext httpContext, int statusCode, object data)
+        private static async Task WriteJsonResponse(HttpListenerContext httpContext, int statusCode, object data, bool isFile)
         {
-            string json = JsonSerializer.Serialize(data);
+            string json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
             byte[] buffer = Encoding.UTF8.GetBytes(json);
 
-            httpContext.Response.StatusCode = (int)statusCode;
-            httpContext.Response.ContentType = "application/json";
+            httpContext.Response.StatusCode = statusCode;
             httpContext.Response.ContentEncoding = Encoding.UTF8;
             httpContext.Response.ContentLength64 = buffer.Length;
+            httpContext.Response.ContentType = "application/json";
 
+            if (isFile)
+            {
+                httpContext.Response.AddHeader("Content-Disposition", "attachment; filename=\"result.json\"");
+            }
             await httpContext.Response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
             httpContext.Response.Close();
         }
@@ -60,7 +64,7 @@ namespace Test_Cs
         {
             int statusCode = 200;
             object response;
-
+            bool isFile = false;
             try
             {
                 string body = "";
@@ -80,6 +84,7 @@ namespace Test_Cs
 
                 Context context = new Context(reqSett);
                 response = context.Execute().Data;
+                isFile = reqSett.File;
             }
             catch (Exception ex)
             {
@@ -93,7 +98,7 @@ namespace Test_Cs
                 }
             }
 
-            await WriteJsonResponse(httpContext, statusCode, response);
+            await WriteJsonResponse(httpContext, statusCode, response, isFile);
         }
     }
 }

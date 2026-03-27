@@ -18,16 +18,17 @@ namespace Test_Cs
         public string Url = url;
         public QueryParam[] Params = param;
         public RequestData? Data = data;
+        public bool File = data?.file ?? false;
     }
     public struct ResponseObj
     {
-        public string Text { get; set; }
-        public bool HasImage { get; set; }
+        public string text { get; set; }
+        public bool hasImage { get; set; }
 
-        public ResponseObj(string text, bool hasImage)
+        public ResponseObj(string itemText, bool itemHasImage)
         {
-            Text = text;
-            HasImage = hasImage;
+            text = itemText;
+            hasImage = itemHasImage;
         }
     }
     public class Response
@@ -39,6 +40,7 @@ namespace Test_Cs
         public List<Item> items { get; set; } = new();
         public int limit { get; set; }
         public string filterBy { get; set; } = "";
+        public bool file { get; set; }
     }
 
     public class Item
