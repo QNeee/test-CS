@@ -19,8 +19,5 @@ WORKDIR /app
 # Копіюємо опубліковані файли
 COPY --from=build /app/out ./
 
-# Копіюємо Data.json (велика буква!)
-COPY --from=build /app/data.json ./data.json
-
 # Вказуємо DLL для запуску
 ENTRYPOINT ["dotnet", "Test-Cs.dll"]
