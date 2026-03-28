@@ -1,10 +1,6 @@
 ﻿namespace Test_Cs.Data
 {
 
-    public interface IDataManagerInstance
-    {
-        public void Execute(Post item, string value, List<ResponseObj> list, string filterKey);
-    }
     public class Post
     {
         public string title { get; set; } = "";
@@ -26,18 +22,13 @@
     }
     public class DataManager
     {
-        readonly string instancesPaths = "Test_Cs.Data.";
-        readonly IDataManagerInstance _instance;
+        private readonly HashSet<string> _addedItems = new(StringComparer.OrdinalIgnoreCase);
         readonly List<Post> _data = new List<Post>();
-        readonly string manageKey = "";
-        public DataManager(string flag, List<Post> data)
+        readonly string _manageKey = "";
+        public DataManager(string manageKey, List<Post> data)
         {
-            string className = Helper.MakeClassName(flag);
-            string classNamePath = $"{instancesPaths}{className}";
-            Type type = Helper.MakeType(classNamePath) ?? typeof(Filter);
-            _instance = (IDataManagerInstance)Activator.CreateInstance(type)!;
             _data = data;
-            manageKey = flag;
+            _manageKey = manageKey;
         }
         public List<ResponseObj> FilterItems(List<string> values)
         {
@@ -48,7 +39,13 @@
                 {
                     foreach (var post in _data)
                     {
-                        _instance.Execute(post, value, list, manageKey);
+                        string itemvalue = post[_manageKey] ?? "";
+                        bool isMatch = itemvalue.Contains(value, StringComparison.OrdinalIgnoreCase);
+                        if (isMatch && _addedItems.Add(itemvalue))
+                        {
+                            var obj = new ResponseObj(itemvalue, !String.IsNullOrEmpty(post.url));
+                            list.Add(obj);
+                        }
                     }
                 }
             }
