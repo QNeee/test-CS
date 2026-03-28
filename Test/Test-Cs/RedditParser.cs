@@ -35,7 +35,6 @@ namespace Test_Cs
                     var title = data.GetProperty("title").GetString() ?? "";
                     var urlImage = data.GetProperty("url").GetString() ?? "";
                     var text = data.GetProperty("selftext").GetString() ?? "";
-                    Console.WriteLine(title);
                     Post post = new Post
                     {
                         title = title,
