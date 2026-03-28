@@ -24,13 +24,11 @@
     {
         private readonly HashSet<string> _addedItems = new(StringComparer.OrdinalIgnoreCase);
         readonly List<Post> _data = new List<Post>();
-        readonly string _manageKey = "";
-        public DataManager(string manageKey, List<Post> data)
+        public DataManager(List<Post> data)
         {
             _data = data;
-            _manageKey = manageKey;
         }
-        public List<ResponseObj> FilterItems(List<string> values)
+        public List<ResponseObj> FilterItems(List<string> values,string filterBy)
         {
             var list = new List<ResponseObj>();
             if (_data != null)
@@ -39,7 +37,7 @@
                 {
                     foreach (var post in _data)
                     {
-                        string itemvalue = post[_manageKey] ?? "";
+                        string itemvalue = post[filterBy] ?? "";
                         bool isMatch = itemvalue.Contains(value, StringComparison.OrdinalIgnoreCase);
                         if (isMatch && _addedItems.Add(itemvalue))
                         {

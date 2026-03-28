@@ -15,8 +15,8 @@ namespace Test_Cs.Requests.POST
                 var tasks = data.items.Select(async item =>
                 {
                     var posts = await RedditParser.GetPosts(item.subreddit, data.limit == 0 ? InitialLimit : data.limit);
-                    var dataManager = new DataManager(data.filterBy ?? defaultFilterValue, posts);
-                    var filtered = dataManager.FilterItems(item.keywords);
+                    var dataManager = new DataManager(posts);
+                    var filtered = dataManager.FilterItems(item.keywords, data.filterBy ?? defaultFilterValue);
                     result.Data["/" + item.subreddit] = filtered;
                 });
                 await Task.WhenAll(tasks);
