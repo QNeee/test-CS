@@ -1,11 +1,9 @@
-﻿
-using Test_Cs.Data.Filter;
-
-namespace Test_Cs.Data
+﻿namespace Test_Cs.Data
 {
-    public interface IFilter
+
+    public interface IDataManagerInstance
     {
-        void Execute(Post item, string value, List<ResponseObj> list);
+        public void Execute(Post item, string value, List<ResponseObj> list, string filterKey);
     }
     public class Post
     {
@@ -13,19 +11,33 @@ namespace Test_Cs.Data
         public string text { get; set; } = "";
         public string url { get; set; } = "";
         public string kind { get; set; } = "";
+        public string? this[string key]
+        {
+            get
+            {
+                return key.ToLower() switch
+                {
+                    "title" => title,
+                    "text" => text,
+                    _ => null
+                };
+            }
+        }
     }
     public class DataManager
     {
-        readonly string filtersPaths = "Test_Cs.Data.Filter.";
-        readonly IFilter _filter;
+        readonly string instancesPaths = "Test_Cs.Data.";
+        readonly IDataManagerInstance _instance;
         readonly List<Post> _data = new List<Post>();
+        readonly string manageKey = "";
         public DataManager(string flag, List<Post> data)
         {
             string className = Helper.MakeClassName(flag);
-            string classNamePath = $"{filtersPaths}{className}";
-            Type type = Helper.MakeType(classNamePath) ?? typeof(Title);
-            _filter = (IFilter)Activator.CreateInstance(type)!;
+            string classNamePath = $"{instancesPaths}{className}";
+            Type type = Helper.MakeType(classNamePath) ?? typeof(Filter);
+            _instance = (IDataManagerInstance)Activator.CreateInstance(type)!;
             _data = data;
+            manageKey = flag;
         }
         public List<ResponseObj> FilterItems(List<string> values)
         {
@@ -36,7 +48,7 @@ namespace Test_Cs.Data
                 {
                     foreach (var post in _data)
                     {
-                        _filter.Execute(post, value, list);
+                        _instance.Execute(post, value, list, manageKey);
                     }
                 }
             }
