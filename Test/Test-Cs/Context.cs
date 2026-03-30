@@ -1,7 +1,6 @@
 ﻿
 
 using System.Text.Json;
-using Test_Cs.Data;
 using Test_Cs.Errors;
 using System.Collections.Concurrent;
 namespace Test_Cs
@@ -54,17 +53,25 @@ namespace Test_Cs
     }
     internal class Context
     {
-        readonly string[] _routes = { "search" };
-        readonly IRequest? _instance;
+        readonly IRequest _instance;
         readonly RequestData? Data;
         readonly string routesMethodsPath = "Test_Cs.Requests.";
         readonly string ReqUrl = "";
         readonly string ReqMethod = "";
+        readonly QueryParam[] _params;
+        readonly Dictionary<string, HashSet<string>> _routes = new()
+        {
+            ["POST"] = new()
+            {
+                "search"
+            }
+        };
         public Context(RequestSettings req)
         {
 
             string reqUrl = req.Url.Trim('/').ToLower();
-            if (!_routes.Contains(reqUrl)) throw new NotFoundException($"Маршрут '{reqUrl}' не знайдено!");
+            bool isRouteExist = _routes.TryGetValue(req.Method, out var methodRoutes) && methodRoutes.Contains(reqUrl);
+            if (!isRouteExist) throw new NotFoundException($"Маршрут '{reqUrl}' не знайдено!");
             string className = Helper.MakeClassName(reqUrl);
             string classNamePath = $"{routesMethodsPath}{req.Method}.{className}";
             Type type = Helper.MakeType(classNamePath) ?? throw new NotFoundException($"Обробник для методу '{req.Method}' по маршруту {reqUrl} не знайдено!");
@@ -72,6 +79,7 @@ namespace Test_Cs
             Data = req.Data;
             ReqMethod = req.Method;
             ReqUrl = req.Url;
+            _params =  req.Params;
         }
         public async Task<Response> Execute()
         {
@@ -86,8 +94,7 @@ namespace Test_Cs
             }
 
             loger.Log("response");
-            var result = await _instance?.Execute(Data)!;
-            Console.WriteLine(result.Data.Count);
+            var result = await _instance.Execute(Data);
             loger.Log(JsonSerializer.Serialize(result.Data, new JsonSerializerOptions { WriteIndented = true }));
             loger.Log("=========================================");
             return result;
