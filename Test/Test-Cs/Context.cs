@@ -58,7 +58,7 @@ namespace Test_Cs
         readonly string routesMethodsPath = "Test_Cs.Requests.";
         readonly string ReqUrl = "";
         readonly string ReqMethod = "";
-        readonly QueryParam[] _params;
+        readonly QueryParam[] _params = [];
         readonly Dictionary<string, HashSet<string>> _routes = new()
         {
             ["POST"] = new()
@@ -87,6 +87,10 @@ namespace Test_Cs
             loger.Log("=========================================");
             loger.Log("request");
             loger.Log(ReqMethod + ":" + ReqUrl);
+            foreach (var p in _params)
+            {
+                loger.Log($"param: {p.Key}={p.Value}");
+            }
             if (Data != null)
             {
                 loger.Log("body");

@@ -19,8 +19,6 @@ namespace Test_Cs
         public  void Log(string message)
         {
             string logMessage = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}";
-
-            Console.WriteLine(logMessage);
             try
             {
                 File.AppendAllText(_logFile, logMessage + Environment.NewLine);
