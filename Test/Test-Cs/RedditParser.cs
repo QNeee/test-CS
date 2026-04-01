@@ -1,11 +1,18 @@
 ﻿
-using System.Security.Claims;
+using System.Collections;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Test_Cs.Data;
 
 namespace Test_Cs
 {
+    struct Image
+    {
+        public string url { get; set; }
+    }
+    struct ImageData
+    {
+        public Image source { get; set; }
+    }
     internal class RedditParser
     {
         private static readonly HttpClient client = new HttpClient();
@@ -32,15 +39,32 @@ namespace Test_Cs
                 foreach (var child in childrens)
                 {
                     var data = child.GetProperty("data");
-                    var title = data.GetProperty("title").GetString() ?? "";
-                    var urlImage = data.GetProperty("url").GetString() ?? "";
-                    var text = data.GetProperty("selftext").GetString() ?? "";
+
+                    string imageUrl = "";
+                    string title = data.GetProperty("title").GetString() ?? "";
+                    string text = data.GetProperty("selftext").GetString() ?? "";
+
+                    if (data.TryGetProperty("preview", out JsonElement preview) &&
+                        preview.TryGetProperty("images", out JsonElement images) &&
+                        images.ValueKind == JsonValueKind.Array &&
+                        images.GetArrayLength() > 0)
+                    {
+                        var firstImage = images[0];
+
+                        if (firstImage.TryGetProperty("source", out JsonElement source) &&
+                            source.TryGetProperty("url", out JsonElement urlElement))
+                        {
+                            imageUrl = urlElement.GetString() ?? "";
+                        }
+                    }
+
                     Post post = new Post
                     {
                         title = title,
                         text = text,
-                        url = urlImage
+                        url = imageUrl
                     };
+
                     posts.Add(post);
                 }
             }
